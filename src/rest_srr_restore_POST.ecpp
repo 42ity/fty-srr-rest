@@ -24,7 +24,7 @@
  */
  #><%pre>
 
-#include "srr.pb.h"
+#include "srr_pb.h"
 #include <src/fty_srr_rest_classes.h>
 
 using namespace dto::srr;
