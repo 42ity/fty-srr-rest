@@ -24,7 +24,7 @@
  */
  #><%pre>
 
-#include "srr_pb.h"
+#include "srr.pb.h"
 #include <src/fty_srr_rest_classes.h>
 
 using namespace dto::srr;
@@ -63,9 +63,9 @@ UserInfo user;
     };
 
     CHECK_USER_PERMISSIONS_OR_DIE(PERMISSIONS);
-  
+
     try
-    {   
+    {
         reply.out() << saveIpm2Configuration(request.getBody());
     }
     catch (std::runtime_error& ex)
@@ -74,4 +74,3 @@ UserInfo user;
     }
 
 </%cpp>
-        

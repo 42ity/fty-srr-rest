@@ -24,7 +24,7 @@
  */
  #><%pre>
 
-#include "srr_pb.h"
+#include "srr.pb.h"
 #include <src/fty_srr_rest_classes.h>
 
 using namespace dto::srr;
@@ -74,7 +74,7 @@ UserInfo user;
     {
         http_die("internal-error", "Wrong confirmation password");
     }
-    
+
     try
     {
         // force parameter to skip integrity check
@@ -90,6 +90,5 @@ UserInfo user;
     {
         http_die ("internal-error", TRANSLATE_ME ("SrrException on restore IPM2").c_str());
     }
-    
+
 </%cpp>
-        
