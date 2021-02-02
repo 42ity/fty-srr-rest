@@ -32,7 +32,7 @@
 #include <cxxtools/jsonserializer.h>
 #include <cxxtools/jsondeserializer.h>
 
-#include <fty_common_json.h>
+#include <fty_srr_dto.h>
 
 /**
  * Send a request and wait reply in synchronous mode.
@@ -87,12 +87,11 @@ std::vector<std::string> splitString(const std::string input, const char delimit
  */
 const std::string addSessionToken(const std::string input, const std::string sessionToken)
 {
-  cxxtools::SerializationInfo si;
-  JSON::readFromString(input, si);
-  // TODO replacing "SESSION_TOKEN" by SESSION_TOKEN
-  if (si.findMember("SESSION_TOKEN") == NULL)
+  cxxtools::SerializationInfo si = dto::srr::deserializeJson(input);
+
+  if (si.findMember(dto::srr::SESSION_TOKEN) == NULL)
   {
-    si.addMember("SESSION_TOKEN") <<= sessionToken;
+    si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
   }
-  return JSON::writeToString (si, false);
+  return dto::srr::serializeJson (si, false);
 }
