@@ -41,6 +41,7 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
     if(force) {
         reqData.push_back("force");
     }
+
     // Send request
     dto::UserData respData = sendRequest("restore", reqData);
 
@@ -60,7 +61,7 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
 </%pre>
 <%request scope="global">
 UserInfo user;
-//std::string gaccess_token;
+std::string gaccess_token;
 </%request>
 <%cpp>
     // check user permissions
@@ -79,8 +80,8 @@ UserInfo user;
     {
         // force parameter to skip integrity check
         std::string force = qparam.param("force");
-
-        reply.out() << restoreIpm2Configuration(request.getBody(), force == "true");
+        std::string requestPayload = addSessionToken(request.getBody(), gaccess_token);
+        reply.out() << restoreIpm2Configuration(requestPayload, force == "true");
     }
     catch (std::logic_error& ex)
     {
