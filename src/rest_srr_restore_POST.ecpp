@@ -26,8 +26,41 @@
 
 #include "srr_pb.h"
 #include <src/fty_srr_rest_classes.h>
+#include <cxxtools/base64codec.h>
 
 using namespace dto::srr;
+
+// backward compatibility for reauth. TODO: remove it for next release
+static std::string encodeReauthToken(const std::string& accessToken)
+{
+    std::string token{accessToken};
+
+    bool withBearer = (token.compare(0, 7, "Bearer ") == 0);
+    if (withBearer) {
+        token = token.substr(7);
+    }
+
+    std::size_t pos = token.find(':');
+    if (pos != std::string::npos) {
+        // we have an old style re-auth, encode it to base64
+        token =  cxxtools::Base64Codec::encode(token);
+    }
+
+    if (withBearer) {
+        token = "Bearer " + token;
+    }
+    return token;
+}
+
+static std::string simpleAccessToken(const std::string& accessToken)
+{
+    std::string token = encodeReauthToken(accessToken);
+    if (token.compare(0, 7, "Bearer ") == 0) {
+        token = token.substr(7);
+    }
+    return token;
+}
+
 
 /**
  * Restore IPM2 configuration data
@@ -61,7 +94,6 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
 </%pre>
 <%request scope="global">
 UserInfo user;
-std::string gaccess_token;
 </%request>
 <%cpp>
     // check user permissions
@@ -80,7 +112,8 @@ std::string gaccess_token;
     {
         // force parameter to skip integrity check
         std::string force = qparam.param("force");
-        std::string requestPayload = addSessionToken(request.getBody(), gaccess_token);
+        std::string token = request.getHeader(tnt::httpheader::authorization); //"Bearer WmJDWGh1QjkzcGYvUE9XK3hMeTRKNWFrOm5vc291cDR1IQ=="
+        std::string requestPayload = addSessionToken(request.getBody(), simpleAccessToken(token));
         reply.out() << restoreIpm2Configuration(requestPayload, force == "true");
     }
     catch (std::logic_error& ex)
