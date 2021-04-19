@@ -19,6 +19,7 @@ if (BUILD_TESTING)
             Catch2::Catch2
             stdc++fs
             log4cplus
+            protobuf
     )
 
     #enable coverage
