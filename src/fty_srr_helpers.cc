@@ -26,7 +26,7 @@
 @end
 */
 
-#include "fty_srr_rest_classes.h"
+#include "fty_srr_helpers.h"
 
 #include <cxxtools/serializationinfo.h>
 #include <cxxtools/jsonserializer.h>

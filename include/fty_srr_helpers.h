@@ -25,6 +25,12 @@
 #include <string>
 #include <fty_common_messagebus.h>
 
+// Common defs
+#define END_POINT                       "ipc://@/malamute"
+#define AGENT_NAME                      "fty-srr-rest"
+#define AGENT_NAME_REQUEST_DESTINATION  "fty-srr"
+#define MSG_QUEUE_NAME                  "ETN.Q.IPMCORE.SRR"
+#define DEFAULT_TIME_OUT                600
 
 /**
  * Send a request and wait reply in synchronous mode.

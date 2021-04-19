@@ -26,7 +26,11 @@
 
 @Library('etn-ipm2-jenkins') _
 
-import params.ZprojectPipelineParams
+//import params.CmakePipelineParams
+//CmakePipelineParams parameters = new CmakePipelineParams()
+//parameters.debugBuildRunTests = false
+//parameters.debugBuildRunMemcheck = false
+//etn_ipm2_build_and_tests_pipeline_cmake(parameters)
 
-// run without default options
-etn_ipm2_build_and_tests_pipeline_zproject()
+// run with default parameters
+etn_ipm2_build_and_tests_pipeline_cmake()
