@@ -91,7 +91,7 @@ const std::string addSessionToken(const std::string input, const std::string ses
 
   if (si.findMember(dto::srr::SESSION_TOKEN) == NULL)
   {
-    si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
+      si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
   }
   return dto::srr::serializeJson (si, false);
 }

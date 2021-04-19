@@ -24,12 +24,13 @@
  */
  #><%pre>
 
-#include <src/fty_srr_rest_classes.h>
+#include "fty_srr_helpers.h"
+#include <fty_common_rest.h>
+#include <fty_log.h>
 
 </%pre>
 <%request scope="global">
 UserInfo user;
-//std::string gaccess_token;
 </%request>
 <%cpp>
     // check user permissions
