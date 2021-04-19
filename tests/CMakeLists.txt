@@ -12,7 +12,8 @@ if (BUILD_TESTING)
         PREPROCESSOR -DCATCH_CONFIG_FAST_COMPILE
         USES
             cxxtools
-            protobuf
+            fty_common
+            fty_common_logging
             fty_common_messagebus
             fty_common_dto
             Catch2::Catch2

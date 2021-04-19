@@ -18,10 +18,10 @@ etn_target(shared ${PROJECT_NAME}
     include
   USES
     fty-cmake-rest
-    czmq
-    tntnet
     cxxtools
-    protobuf
+    tntnet
+    tntdb
+    fty_common
     fty_common_logging
     fty_common_rest
     fty_common_messagebus
