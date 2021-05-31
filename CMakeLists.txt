@@ -15,9 +15,8 @@ resolve_lib(tntnet)
 # Define the servlet
 etn_target(shared ${PROJECT_NAME}
     SOURCES
-        src/*.cc
-    INCLUDE_DIRS
-        include
+        src/fty_srr_helpers.cc
+        src/fty_srr_helpers.h
     USES
         czmq
         fty-cmake-rest
