@@ -8,24 +8,27 @@ project(fty_srr_rest
 
 ##############################################################################################################
 find_package(fty-cmake PATHS ${CMAKE_BINARY_DIR}/fty-cmake)
+find_package(fty-cmake-rest PATHS ${CMAKE_BINARY_DIR}/fty-cmake-rest)
+resolve_lib(tntnet)
 ##############################################################################################################
 
 # Define the servlet
 etn_target(shared ${PROJECT_NAME}
-  SOURCES
-    src/*.cc
-  INCLUDE_DIRS
-    include
-  USES
-    fty-cmake-rest
-    cxxtools
-    tntnet
-    tntdb
-    fty_common
-    fty_common_logging
-    fty_common_rest
-    fty_common_messagebus
-    fty_common_dto
+    SOURCES
+        src/*.cc
+    INCLUDE_DIRS
+        include
+    USES
+        czmq
+        fty-cmake-rest
+        cxxtools
+        tntnet
+        tntdb
+        fty_common
+        fty_common_logging
+        fty_common_rest
+        fty_common_messagebus
+        fty_common_dto
 )
 
 # Get the ecpp
