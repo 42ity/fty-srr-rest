@@ -23,7 +23,7 @@
 #include <cxxtools/jsondeserializer.h>
 #include <cxxtools/jsonserializer.h>
 #include <cxxtools/serializationinfo.h>
-#include <fty_srr_dto.h>
+#include <fty_common_messagebus.h>
 
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData)
 {

@@ -22,7 +22,6 @@
 #pragma once
 
 #include <string>
-#include <fty_common_messagebus.h>
 #include <fty_srr_dto.h>
 
 // Common defs
