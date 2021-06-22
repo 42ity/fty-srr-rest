@@ -19,31 +19,16 @@
     =========================================================================
 */
 
-/*
-@header
-    fty_srr_helpers -
-@discuss
-@end
-*/
-
 #include "fty_srr_helpers.h"
-
-#include <cxxtools/serializationinfo.h>
-#include <cxxtools/jsonserializer.h>
 #include <cxxtools/jsondeserializer.h>
+#include <cxxtools/jsonserializer.h>
+#include <cxxtools/serializationinfo.h>
+#include <fty_common_messagebus.h>
 
-#include <fty_srr_dto.h>
-
-/**
- * Send a request and wait reply in synchronous mode.
- * @param subject
- * @param userData
- * @return The Reply or MessageBusException when a time out occurs.
- */
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData)
 {
     // Client id
-    std::string clientId = messagebus::getClientId(AGENT_NAME);
+    std::string                             clientId = messagebus::getClientId(AGENT_NAME);
     std::unique_ptr<messagebus::MessageBus> requester(messagebus::MlmMessageBus(END_POINT, clientId));
     requester->connect();
 
@@ -60,38 +45,24 @@ dto::UserData sendRequest(const std::string& action, const dto::UserData& userDa
     return resp.userData();
 }
 
-/**
- * Utility to split a string with a delimiter into a string vector.
- * @param input string
- * @param delimiter
- * @return A list of string splited.
- */
-std::vector<std::string> splitString(const std::string input, const char delimiter)
+std::vector<std::string> splitString(const std::string& input, const char delimiter)
 {
     std::vector<std::string> resultList;
-    std::stringstream ss(input);
+    std::stringstream        ss(input);
 
     std::string token;
-    while (std::getline(ss, token, delimiter))
-    {
-        resultList.push_back (token);
+    while (std::getline(ss, token, delimiter)) {
+        resultList.push_back(token);
     }
     return resultList;
 }
 
-/**
- * Utility to adding the session token from an existing payload.
- * @param input string
- * @param sessionToken string
- * @return A json payload with the session token.
- */
-const std::string addSessionToken(const std::string input, const std::string sessionToken)
+const std::string addSessionToken(const std::string& input, const std::string& sessionToken)
 {
-  cxxtools::SerializationInfo si = dto::srr::deserializeJson(input);
+    cxxtools::SerializationInfo si = dto::srr::deserializeJson(input);
 
-  if (si.findMember(dto::srr::SESSION_TOKEN) == NULL)
-  {
-      si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
-  }
-  return dto::srr::serializeJson (si, false);
+    if (si.findMember(dto::srr::SESSION_TOKEN) == nullptr) {
+        si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
+    }
+    return dto::srr::serializeJson(si, false);
 }
