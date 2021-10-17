@@ -43,7 +43,13 @@ fty_ecppbuilder(
     ${ECPP_FILES}
 )
 
-add_subdirectory(tests)
-
 # Install tntnet mapping file in etc/tntnet/bios.d/
 install(FILES ${PROJECT_SOURCE_DIR}/resources/40_srr-rest.xml DESTINATION ${CMAKE_INSTALL_FULL_SYSCONFDIR}/tntnet/bios.d/)
+
+etn_test_target(${PROJECT_NAME}
+    SOURCES
+        tests/*.cc
+    PREPROCESSOR -DCATCH_CONFIG_FAST_COMPILE
+    USES
+        stdc++fs
+)
