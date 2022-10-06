@@ -19,14 +19,12 @@
  #><#
 /*!
  * \file rest_srr_save_POST.ecpp
- * \author Xavier Millieret <XavierMillieret@Eaton.com>
  * \brief Implementation of POST save operations.
  */
  #><%pre>
 
 #include "src/fty_srr_helpers.h"
 #include <fty_common_rest.h>
-#include <fty_log.h>
 #include <srr_pb.h>
 #include <cxxtools/base64codec.h>
 
@@ -63,7 +61,6 @@ static std::string simpleAccessToken(const std::string& accessToken)
     return token;
 }
 
-
 /**
  * Restore IPM2 configuration data
  *
@@ -73,7 +70,7 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
 {
     dto::UserData reqData;
     reqData.push_back(inputData);
-    if(force) {
+    if (force) {
         reqData.push_back("force");
     }
 
@@ -87,7 +84,7 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
        throw std::runtime_error("Restore error.");
     }
 
-    if(respData.front() == "unknown") {
+    if (respData.front() == "unknown") {
         throw std::logic_error(respData.back());
     }
     return respData.back();
@@ -126,5 +123,4 @@ UserInfo user;
     {
         http_die ("internal-error", TRANSLATE_ME ("SrrException on restore IPM2").c_str());
     }
-
 </%cpp>

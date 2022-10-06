@@ -19,7 +19,6 @@
  #><#
 /*!
  * \file rest_srr_GET.ecpp
- * \author Xavier Millieret <XavierMillieret@Eaton.com>
  * \brief Implementation of GET to retrieve group list.
  */
  #><%pre>
@@ -61,12 +60,10 @@ UserInfo user;
 
     try
     {
-        getFeatureListManaged();
         reply.out() << getFeatureListManaged();
     }
     catch (const std::runtime_error& ex)
     {
         http_die ("internal-error", TRANSLATE_ME ("SrrException on save IPM2").c_str());
     }
-
 </%cpp>
