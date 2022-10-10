@@ -4,5 +4,5 @@
 
 TEST_CASE("All the stuff of before")
 {
-    CHECK(true);
+    REQUIRE(true);
 }

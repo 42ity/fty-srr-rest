@@ -20,16 +20,21 @@
 */
 
 #include "fty_srr_helpers.h"
-#include <cxxtools/jsondeserializer.h>
-#include <cxxtools/jsonserializer.h>
 #include <cxxtools/serializationinfo.h>
 #include <fty_common_messagebus.h>
+
+// conf defaults
+#define MLM_END_POINT                   "ipc://@/malamute"
+#define AGENT_NAME                      "fty-srr-rest"
+#define AGENT_NAME_REQUEST_DESTINATION  "fty-srr"
+#define MSG_QUEUE_NAME                  "ETN.Q.IPMCORE.SRR"
+#define DEFAULT_TIME_OUT                600 // seconds
 
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData)
 {
     // Client id
     std::string                             clientId = messagebus::getClientId(AGENT_NAME);
-    std::unique_ptr<messagebus::MessageBus> requester(messagebus::MlmMessageBus(END_POINT, clientId));
+    std::unique_ptr<messagebus::MessageBus> requester(messagebus::MlmMessageBus(MLM_END_POINT, clientId));
     requester->connect();
 
     // Build message

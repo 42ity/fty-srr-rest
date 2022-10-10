@@ -19,7 +19,6 @@
  #><#
 /*!
  * \file rest_srr_save_POST.ecpp
- * \author Xavier Millieret <XavierMillieret@Eaton.com>
  * \brief Implementation of POST save operations.
  */
  #><%pre>
@@ -42,6 +41,6 @@ UserInfo user;
 
     std::string errorMsg = "IPM2 reset not implemented yet";
 
-    log_error (errorMsg.c_str());
+    log_error ("%s", errorMsg.c_str());
     http_die ("internal-error", TRANSLATE_ME (errorMsg.c_str()).c_str());
 </%cpp>

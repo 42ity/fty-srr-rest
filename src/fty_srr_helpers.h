@@ -24,15 +24,8 @@
 #include <string>
 #include <fty_srr_dto.h>
 
-// Common defs
-#define END_POINT                       "ipc://@/malamute"
-#define AGENT_NAME                      "fty-srr-rest"
-#define AGENT_NAME_REQUEST_DESTINATION  "fty-srr"
-#define MSG_QUEUE_NAME                  "ETN.Q.IPMCORE.SRR"
-#define DEFAULT_TIME_OUT                600
-
 /// Send a request and wait reply in synchronous mode.
-/// @param subject Request subject
+/// @param action Request action (or subject)
 /// @param userData User data to send
 /// @return The Reply or MessageBusException when a time out occurs.
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData);
@@ -43,7 +36,7 @@ dto::UserData sendRequest(const std::string& action, const dto::UserData& userDa
 /// @return A list of string splited.
 std::vector<std::string> splitString(const std::string& input, const char delimiter);
 
-/// Utility to adding a session token from an existing payload.
+/// Utility to add a session token from an existing payload.
 /// @param input string
 /// @param sessionToken string
 /// @return A json payload with the session token.
