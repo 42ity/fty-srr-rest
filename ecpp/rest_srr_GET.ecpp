@@ -19,7 +19,7 @@
  #><#
 /*!
  * \file rest_srr_GET.ecpp
- * \brief Implementation of GET to retrieve group list.
+ * \brief Implementation of GET to retrieve groups list.
  */
  #><%pre>
 
@@ -31,39 +31,49 @@ using namespace dto::srr;
 
 /**
  * Get SRR capabilities.
- *
  */
 static std::string getFeatureListManaged()
 {
-    dto::UserData reqData;
     // Send request
+    dto::UserData reqData;
     dto::UserData respData = sendRequest("list", reqData);
-    if (respData.empty())
-    {
+
+    if (respData.empty()) {
        throw std::runtime_error("Get group list error.");
     }
+
     return respData.front();
 }
 
 </%pre>
 <%request scope="global">
 UserInfo user;
-//std::string gaccess_token;
 </%request>
 <%cpp>
+    logDebug("{}", request.getUrl());
+
     // check user permissions
     static const std::map <BiosProfile, std::string> PERMISSIONS = {
-            {BiosProfile::Admin, "R"}
+        {BiosProfile::Admin, "R"}
     };
 
     CHECK_USER_PERMISSIONS_OR_DIE(PERMISSIONS);
 
-    try
-    {
-        reply.out() << getFeatureListManaged();
+    bool success = false;
+    try {
+        std::string response = getFeatureListManaged();
+
+        reply.out() << response;
+        success = true;
     }
-    catch (const std::runtime_error& ex)
-    {
-        http_die ("internal-error", TRANSLATE_ME ("SrrException on save IPM2").c_str());
+    catch (const std::runtime_error& e) {
+        logError("std::runtime_error: {}", e.what());
+    }
+    catch (...) {
+        logError("{}", "Unexpected exception");
+    }
+
+    if (!success) {
+        http_die ("internal-error", TRANSLATE_ME ("SrrException on get").c_str());
     }
 </%cpp>

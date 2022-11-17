@@ -18,22 +18,26 @@
  #
  #><#
 /*!
- * \file rest_srr_save_POST.ecpp
- * \brief Implementation of POST save operations.
+ * \file rest_srr_restore_POST.ecpp
+ * \brief Implementation of POST restore operations.
  */
  #><%pre>
 
 #include "src/fty_srr_helpers.h"
 #include <fty_common_rest.h>
+#include <fty_log.h>
 #include <srr_pb.h>
 #include <cxxtools/base64codec.h>
 
+//TODO handle auditability
+
 using namespace dto::srr;
 
-// backward compatibility for reauth. TODO: remove it for next release
-static std::string encodeReauthToken(const std::string& accessToken)
+// backward compatibility for reauth.
+// TODO: remove it for next release
+static std::string encodeReauthToken(const std::string& authHeader)
 {
-    std::string token{accessToken};
+    std::string token{authHeader};
 
     bool withBearer = (token.compare(0, 7, "Bearer ") == 0);
     if (withBearer) {
@@ -52,20 +56,17 @@ static std::string encodeReauthToken(const std::string& accessToken)
     return token;
 }
 
-static std::string simpleAccessToken(const std::string& accessToken)
+// process reauth header and extract token from auth. header
+static std::string simpleAccessToken(const std::string& authHeader)
 {
-    std::string token = encodeReauthToken(accessToken);
+    std::string token = encodeReauthToken(authHeader);
     if (token.compare(0, 7, "Bearer ") == 0) {
         token = token.substr(7);
     }
     return token;
 }
 
-/**
- * Restore IPM2 configuration data
- *
- */
-
+// Restore IPM2 configuration data
 static std::string restoreIpm2Configuration(const std::string& inputData, bool force)
 {
     dto::UserData reqData;
@@ -77,17 +78,19 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
     // Send request
     dto::UserData respData = sendRequest("restore", reqData);
 
-    // respData[0] -> status
-    // respData[1] -> data
-    if (respData.size() != 2)
-    {
+    // respData[0] -> status, respData[1] -> data
+    if (respData.size() != 2) {
        throw std::runtime_error("Restore error.");
     }
 
-    if (respData.front() == "unknown") {
-        throw std::logic_error(respData.back());
+    std::string status = respData.front();
+    std::string data = respData.back();
+
+    if (status == "unknown") {
+        throw std::logic_error(data);
     }
-    return respData.back();
+
+    return data;
 }
 
 </%pre>
@@ -95,32 +98,47 @@ static std::string restoreIpm2Configuration(const std::string& inputData, bool f
 UserInfo user;
 </%request>
 <%cpp>
+    logDebug("{}", request.getUrl());
+
     // check user permissions
     static const std::map <BiosProfile, std::string> PERMISSIONS = {
-            {BiosProfile::Admin, "C"}
+        {BiosProfile::Admin, "C"}
     };
 
     CHECK_USER_PERMISSIONS_OR_DIE(PERMISSIONS);
 
-    if (!user.reauth())
-    {
+    if (!user.reauth()) {
         http_die("internal-error", "Wrong confirmation password");
     }
 
-    try
-    {
+    bool success = false;
+    try {
         // force parameter to skip integrity check
         std::string force = qparam.param("force");
-        std::string token = request.getHeader(tnt::httpheader::authorization); //"Bearer WmJDWGh1QjkzcGYvUE9XK3hMeTRKNWFrOm5vc291cDR1IQ=="
-        std::string requestPayload = addSessionToken(request.getBody(), simpleAccessToken(token));
-        reply.out() << restoreIpm2Configuration(requestPayload, force == "true");
+        std::string authHeader = request.getHeader(tnt::httpheader::authorization);
+
+        std::string requestPayload = addSessionToken(request.getBody(), simpleAccessToken(authHeader));
+
+        std::string response = restoreIpm2Configuration(requestPayload, force == "true");
+
+        reply.out() << response;
+        success = true;
     }
-    catch (const std::logic_error& ex)
-    {
-        http_die ("precondition-failed", ex.what());
+    catch (const std::logic_error& e) {
+        logError("std::logic_error: {}", e.what());
+        http_die ("precondition-failed", e.what());
     }
-    catch (const std::runtime_error& ex)
-    {
-        http_die ("internal-error", TRANSLATE_ME ("SrrException on restore IPM2").c_str());
+    catch (const std::runtime_error& e) {
+        logError("std::runtime_error: {}", e.what());
+    }
+    catch (const std::exception& e) {
+        logError("std::exception: {}", e.what());
+    }
+    catch (...) {
+        logError("{}", "Unexpected exception");
+    }
+
+    if (!success) {
+        http_die ("internal-error", TRANSLATE_ME ("SrrException on restore").c_str());
     }
 </%cpp>

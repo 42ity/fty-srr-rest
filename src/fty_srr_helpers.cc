@@ -44,8 +44,10 @@ dto::UserData sendRequest(const std::string& action, const dto::UserData& userDa
     msg.metaData().emplace(messagebus::Message::FROM, clientId);
     msg.metaData().emplace(messagebus::Message::TO, AGENT_NAME_REQUEST_DESTINATION + std::string("-ui"));
     msg.metaData().emplace(messagebus::Message::CORRELATION_ID, messagebus::generateUuid());
+
     // Send request
     messagebus::Message resp = requester->request(MSG_QUEUE_NAME + std::string(".UI"), msg, DEFAULT_TIME_OUT);
+
     // Return the data response
     return resp.userData();
 }
@@ -59,6 +61,7 @@ std::vector<std::string> splitString(const std::string& input, const char delimi
     while (std::getline(ss, token, delimiter)) {
         resultList.push_back(token);
     }
+
     return resultList;
 }
 
