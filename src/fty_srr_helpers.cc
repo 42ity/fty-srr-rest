@@ -23,16 +23,24 @@
 #include <cxxtools/serializationinfo.h>
 #include <fty_common_messagebus.h>
 
-// conf defaults
-#define MLM_END_POINT                   "ipc://@/malamute"
-#define AGENT_NAME                      "fty-srr-rest"
-#define AGENT_NAME_REQUEST_DESTINATION  "fty-srr"
-#define MSG_QUEUE_NAME                  "ETN.Q.IPMCORE.SRR"
-#define DEFAULT_TIME_OUT                600 // seconds
-
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData)
 {
-    // Client id
+    // conf defaults
+    const std::string MLM_END_POINT          = "ipc://@/malamute";
+    const std::string AGENT_NAME             = "fty-srr-rest";
+    const std::string AGENT_NAME_DESTINATION = "fty-srr-ui";
+    const std::string MSG_QUEUE_NAME         = "ETN.Q.IPMCORE.SRR.UI";
+    const int         REQUEST_TIMEOUT_SEC    = 10 * 60; // seconds
+
+    int timeout_sec = REQUEST_TIMEOUT_SEC;
+    if (action == "list") {
+        timeout_sec = 30;
+    }
+
+    logDebug("rest_srr sendRequest (action: {}, dest.: {}, queue: {}, timeout: {} sec)",
+        action, AGENT_NAME_DESTINATION, MSG_QUEUE_NAME, timeout_sec);
+
+    // Connect client
     std::string                             clientId = messagebus::getClientId(AGENT_NAME);
     std::unique_ptr<messagebus::MessageBus> requester(messagebus::MlmMessageBus(MLM_END_POINT, clientId));
     requester->connect();
@@ -42,27 +50,16 @@ dto::UserData sendRequest(const std::string& action, const dto::UserData& userDa
     msg.userData() = userData;
     msg.metaData().emplace(messagebus::Message::SUBJECT, action);
     msg.metaData().emplace(messagebus::Message::FROM, clientId);
-    msg.metaData().emplace(messagebus::Message::TO, AGENT_NAME_REQUEST_DESTINATION + std::string("-ui"));
+    msg.metaData().emplace(messagebus::Message::TO, AGENT_NAME_DESTINATION);
     msg.metaData().emplace(messagebus::Message::CORRELATION_ID, messagebus::generateUuid());
 
     // Send request
-    messagebus::Message resp = requester->request(MSG_QUEUE_NAME + std::string(".UI"), msg, DEFAULT_TIME_OUT);
+    messagebus::Message resp = requester->request(MSG_QUEUE_NAME, msg, timeout_sec);
+
+    logDebug("rest_srr sendRequest (action: {}): response received", action);
 
     // Return the data response
     return resp.userData();
-}
-
-std::vector<std::string> splitString(const std::string& input, const char delimiter)
-{
-    std::vector<std::string> resultList;
-    std::stringstream        ss(input);
-
-    std::string token;
-    while (std::getline(ss, token, delimiter)) {
-        resultList.push_back(token);
-    }
-
-    return resultList;
 }
 
 const std::string addSessionToken(const std::string& input, const std::string& sessionToken)
@@ -72,5 +69,6 @@ const std::string addSessionToken(const std::string& input, const std::string& s
     if (si.findMember(dto::srr::SESSION_TOKEN) == nullptr) {
         si.addMember(dto::srr::SESSION_TOKEN) <<= sessionToken;
     }
+
     return dto::srr::serializeJson(si, false);
 }
