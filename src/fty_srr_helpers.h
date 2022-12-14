@@ -30,12 +30,6 @@
 /// @return The Reply or MessageBusException when a time out occurs.
 dto::UserData sendRequest(const std::string& action, const dto::UserData& userData);
 
-/// Utility to split a string with a delimiter into a string vector.
-/// @param input string
-/// @param delimiter
-/// @return A list of string splited.
-std::vector<std::string> splitString(const std::string& input, const char delimiter);
-
 /// Utility to add a session token from an existing payload.
 /// @param input string
 /// @param sessionToken string

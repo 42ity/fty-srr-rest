@@ -18,8 +18,8 @@
  #
  #><#
 /*!
- * \file rest_srr_save_POST.ecpp
- * \brief Implementation of POST save operations.
+ * \file rest_srr_reset_POST.ecpp
+ * \brief Implementation of POST reset operations.
  */
  #><%pre>
 
@@ -32,15 +32,16 @@
 UserInfo user;
 </%request>
 <%cpp>
+    logDebug("{}", request.getUrl());
+
     // check user permissions
     static const std::map <BiosProfile, std::string> PERMISSIONS = {
-            {BiosProfile::Admin, "C"}
+        {BiosProfile::Admin, "C"}
     };
 
     CHECK_USER_PERMISSIONS_OR_DIE(PERMISSIONS);
 
-    std::string errorMsg = "IPM2 reset not implemented yet";
+    logError("{}", "reset not implemented yet");
 
-    log_error ("%s", errorMsg.c_str());
-    http_die ("internal-error", TRANSLATE_ME (errorMsg.c_str()).c_str());
+    http_die ("internal-error", TRANSLATE_ME ("IPM2 reset not implemented yet").c_str());
 </%cpp>
