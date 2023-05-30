@@ -1,6 +1,4 @@
 #
-#    NOTE: This file was customized after generation, take care to keep this during updates.
-#
 #    fty-srr-rest - Save, restore and reset REST API
 #
 #    Copyright (C) 2019 - 2020 Eaton
@@ -22,7 +20,7 @@
 Source: fty-srr-rest
 Section: net
 Priority: optional
-Maintainer: fty-srr-rest Developers <eatonipcopensource@eaton.com>
+Maintainer: fty-srr-rest Developers <opensource@eaton.com>
 Standards-Version: 4.0.1.0
 Build-Depends: debhelper (>= 9),
     cmake (>=3.0),
