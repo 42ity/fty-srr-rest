@@ -30,6 +30,8 @@ etn_target(shared ${PROJECT_NAME}
         fty_common_dto
 )
 
+set_target_properties(${PROJECT_NAME} PROPERTIES SOVERSION ${PROJECT_VERSION_MAJOR})
+
 # Get the ecpp
 file(GLOB ECPP_FILES
   ecpp/*.ecpp
