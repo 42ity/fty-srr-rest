@@ -43,5 +43,5 @@ UserInfo user;
 
     logError("{}", "reset not implemented yet");
 
-    http_die ("internal-error", TRANSLATE_ME ("IPM2 reset not implemented yet").c_str());
+    http_die ("internal-error", TRANSLATE_ME ("reset not implemented").c_str());
 </%cpp>
